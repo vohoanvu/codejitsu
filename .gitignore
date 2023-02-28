@@ -262,4 +262,4 @@ CodeJitsu/Logs/*
 # Use abp install-libs to restore.
 **/wwwroot/libs/*
 
-CodeJitsu/appsettings.secrets.json
+CodeJitsu\appsettings.secrets.json
