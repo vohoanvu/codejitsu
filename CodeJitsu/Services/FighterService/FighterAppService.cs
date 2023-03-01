@@ -1,17 +1,22 @@
-﻿using CodeJitsu.Entities.Fighter;
-using CodeJitsu.Services.Dtos;
+﻿using CodeJitsu.Controllers.Dtos;
+using CodeJitsu.Entities.Fighter;
 using CodeJitsu.Services.FighterService.Interfaces;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Modularity;
 
 namespace CodeJitsu.Services.FighterService
 {
-    public class FighterAppService : IFighterAppService
+    [DependsOn(typeof(CodeJitsuModule))]
+    public class FighterAppService : ApplicationService, IFighterAppService
     {
-        private readonly IRepository<Entities.Fighter.Fighter, Guid> _fighterRepo;
+        private readonly IRepository<Fighter, Guid> _fighterRepo;
         private readonly IRepository<BeltRank, int> _rankRepo;
 
-        public FighterAppService(IRepository<Entities.Fighter.Fighter, Guid> fighterRepo, IRepository<BeltRank, int> rankRepo)
+        public FighterAppService(IRepository<Fighter, Guid> fighterRepo, 
+            IRepository<BeltRank, int> rankRepo)
         {
             _fighterRepo = fighterRepo;
             _rankRepo = rankRepo;
@@ -19,27 +24,55 @@ namespace CodeJitsu.Services.FighterService
 
         public async Task<ListResultDto<ViewFighterDto>> GetListAsync()
         {
-            throw new NotImplementedException();
+            var allFighters=  await _fighterRepo.GetListAsync(true);
+            return ObjectMapper.Map<List<Fighter>, ListResultDto<ViewFighterDto>>(allFighters);
         }
 
         public async Task<ViewFighterDto> GetAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var fighter = await _fighterRepo.GetAsync(id);
+
+            if (fighter == null)
+            {
+                throw new UserFriendlyException("Fighter Not Found!", StatusCodes.Status404NotFound.ToString());
+            }
+
+            return ObjectMapper.Map<Fighter, ViewFighterDto>(fighter);
         }
 
         public async Task CreateAsync(CreateFighterDto input)
         {
-            throw new NotImplementedException();
+            if (!Enum.IsDefined(typeof(Gender), input.Gender) || 
+                !Enum.IsDefined(typeof(FighterRole), input.FighterRole) ||
+                !Enum.IsDefined(typeof(BeltColor), input.BeltColor))
+            {
+                throw new UserFriendlyException("Invalid Enum values", StatusCodes.Status400BadRequest.ToString());
+            }
+
+            var newFighter = ObjectMapper.Map<CreateFighterDto, Fighter>(input);
+
+            await _fighterRepo.InsertAsync(newFighter);
         }
 
         public async Task UpdateAsync(Guid id, UpdateFighterDto input)
         {
-            throw new NotImplementedException();
+            if (!Enum.IsDefined(typeof(Gender), input.Gender) ||
+                !Enum.IsDefined(typeof(FighterRole), input.FighterRole) ||
+                !Enum.IsDefined(typeof(BeltColor), input.BeltColor))
+            {
+                throw new UserFriendlyException("Invalid Enum values", StatusCodes.Status400BadRequest.ToString());
+            }
+
+            var existingFighter = await _fighterRepo.GetAsync(id);
+
+            ObjectMapper.Map(input, existingFighter);
+
+            await _fighterRepo.UpdateAsync(existingFighter);
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            await _fighterRepo.DeleteAsync(id);
         }
     }
 }

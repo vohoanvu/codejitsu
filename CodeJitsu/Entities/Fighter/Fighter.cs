@@ -4,7 +4,7 @@ using Volo.Abp.Domain.Entities;
 
 namespace CodeJitsu.Entities.Fighter
 {
-    public class Fighter : Entity<Guid>
+    public class Fighter : AggregateRoot<Guid>
     {
         public string FighterName { get; set; }
 

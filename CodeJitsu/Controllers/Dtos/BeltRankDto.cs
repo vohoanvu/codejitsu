@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Application.Dtos;
 
-namespace CodeJitsu.Services.Dtos
+namespace CodeJitsu.Controllers.Dtos
 {
-    public class BeltRankDto: EntityDto<int>
+    public class BeltRankDto : EntityDto<int>
     {
         [Required]
         public string Color { get; set; }

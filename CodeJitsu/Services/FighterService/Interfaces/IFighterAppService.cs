@@ -1,4 +1,4 @@
-﻿using CodeJitsu.Services.Dtos;
+﻿using CodeJitsu.Controllers.Dtos;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 

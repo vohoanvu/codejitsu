@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CodeJitsu.Services.Dtos
+namespace CodeJitsu.Controllers.Dtos
 {
     public class ViewFighterDto : FighterDtoBase
     {

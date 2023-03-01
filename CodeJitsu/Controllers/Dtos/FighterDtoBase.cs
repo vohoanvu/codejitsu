@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CodeJitsu.Services.Dtos
+namespace CodeJitsu.Controllers.Dtos
 {
     public class FighterDtoBase
     {
         [Display(Name = "Fighter nickname")]
-        public string? FighterName { get; set; }
+        public string FighterName { get; set; }
 
         [Required]
         public double Height { get; set; }
