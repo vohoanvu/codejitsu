@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
 using CodeJitsu.Data;
+using CodeJitsu.Entities.Fighter;
 using CodeJitsu.Localization;
+using Microsoft.EntityFrameworkCore;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
 using Volo.Abp.Uow;
@@ -46,6 +48,7 @@ using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.EntityFrameworkCore.DependencyInjection;
 
 namespace CodeJitsu;
 
@@ -316,6 +319,13 @@ public class CodeJitsuModule : AbpModule
             });
         });
 
+        Configure<AbpEntityOptions>(options =>
+        {
+            options.Entity<Fighter>(action =>
+            {
+                action.DefaultWithDetailsFunc = query => query.Include(f => f.BeltRank);
+            });
+        });
     }
 
     public override void OnApplicationInitialization(ApplicationInitializationContext context)

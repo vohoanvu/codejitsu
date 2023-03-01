@@ -3,6 +3,7 @@ using System;
 using CodeJitsu.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
@@ -11,9 +12,11 @@ using Volo.Abp.EntityFrameworkCore;
 namespace CodeJitsu.Migrations
 {
     [DbContext(typeof(CodeJitsuDbContext))]
-    partial class CodeJitsuDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230301181052_make-Fighter-AggregateRoot")]
+    partial class makeFighterAggregateRoot
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

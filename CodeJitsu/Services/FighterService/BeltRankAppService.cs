@@ -8,7 +8,6 @@ using Volo.Abp.Modularity;
 
 namespace CodeJitsu.Services.FighterService
 {
-    [DependsOn(typeof(CodeJitsuModule))]
     public class BeltRankAppService :
         CrudAppService<BeltRank, BeltRankDto, int, PagedAndSortedResultRequestDto, BeltRankDto, BeltRankDto>, IBeltRankAppService
     {
