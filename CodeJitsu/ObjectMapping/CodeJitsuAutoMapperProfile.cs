@@ -7,13 +7,6 @@ namespace CodeJitsu.ObjectMapping;
 
 public class CodeJitsuAutoMapperProfile : Profile
 {
-    private readonly IBeltRankAppService _beltRankAppService;
-
-    public CodeJitsuAutoMapperProfile(IBeltRankAppService beltRankAppService)
-    {
-        _beltRankAppService = beltRankAppService;
-    }
-
     public CodeJitsuAutoMapperProfile()
     {
         /* Create your AutoMapper object mappings here */
@@ -21,7 +14,6 @@ public class CodeJitsuAutoMapperProfile : Profile
             .ForMember(x => x.BMI, y => y.MapFrom(z => z.Weight / (z.Height * z.Weight)))
             .ForMember(x => x.Gender, y => y.MapFrom(z => Enum.Parse<Gender>(z.Gender)))
             .ForMember(x => x.Role, y => y.MapFrom(z => Enum.Parse<FighterRole>(z.FighterRole)))
-            .ForMember(x => x.BeltRankId, y => y.MapFrom(z => _beltRankAppService.GetBeltRankIdAsync(z.BeltColor, z.Stripe)) )
             .ReverseMap();
 
         CreateMap<UpdateFighterDto, Fighter>()

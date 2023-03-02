@@ -2,6 +2,7 @@
 using CodeJitsu.Entities.Fighter;
 using CodeJitsu.ObjectMapping;
 using CodeJitsu.Services.FighterService.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -13,13 +14,16 @@ namespace CodeJitsu.Services.FighterService
         private readonly IRepository<Fighter, Guid> _fighterRepo;
         private readonly IRepository<BeltRank, int> _rankRepo;
         private readonly IBeltRankAppService _beltRankAppService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public FighterAppService(IRepository<Fighter, Guid> fighterRepo, 
-            IRepository<BeltRank, int> rankRepo, IBeltRankAppService beltRankAppService)
+            IRepository<BeltRank, int> rankRepo, 
+            IBeltRankAppService beltRankAppService, IHttpContextAccessor httpContextAccessor)
         {
             _fighterRepo = fighterRepo;
             _rankRepo = rankRepo;
             _beltRankAppService = beltRankAppService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<ViewFighterDto>> GetListAsync()
@@ -41,7 +45,7 @@ namespace CodeJitsu.Services.FighterService
             return ObjectMapper.Map<Fighter, ViewFighterDto>(fighter);
         }
 
-        public async Task CreateAsync(CreateFighterDto input)
+        public async Task<ViewFighterDto> CreateAsync(CreateFighterDto input)
         {
             if (!Enum.IsDefined(typeof(Gender), input.Gender) || 
                 !Enum.IsDefined(typeof(FighterRole), input.FighterRole) ||
@@ -51,8 +55,10 @@ namespace CodeJitsu.Services.FighterService
             }
 
             var newFighter = ObjectMapper.Map<CreateFighterDto, Fighter>(input);
+            newFighter.BeltRankId = await _beltRankAppService.GetBeltRankIdAsync(input.BeltColor, input.Stripe);
 
-            await _fighterRepo.InsertAsync(newFighter);
+            var createdFighter = await _fighterRepo.InsertAsync(newFighter);
+            return ObjectMapper.Map<Fighter, ViewFighterDto>(createdFighter);
         }
 
         public async Task<ViewFighterDto> UpdateAsync(Guid id, UpdateFighterDto input)

@@ -1,5 +1,4 @@
 ﻿using CodeJitsu.Controllers.Dtos;
-using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
 namespace CodeJitsu.Services.FighterService.Interfaces
@@ -8,7 +7,7 @@ namespace CodeJitsu.Services.FighterService.Interfaces
     {
         Task<List<ViewFighterDto>> GetListAsync();
         Task<ViewFighterDto> GetAsync(Guid id);
-        Task CreateAsync(CreateFighterDto input);
+        Task<ViewFighterDto> CreateAsync(CreateFighterDto input);
         Task<ViewFighterDto> UpdateAsync(Guid id, UpdateFighterDto input);
         Task DeleteAsync(Guid id);
     }
