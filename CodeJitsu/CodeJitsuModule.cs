@@ -113,14 +113,29 @@ public class CodeJitsuModule : AbpModule
             );
         });
 
+        var hostingEnv = context.Services.GetHostingEnvironment();
+
+        PreConfigure<OpenIddictServerBuilder>(builder =>
+        {
+            builder.AddDevelopmentEncryptionCertificate().AddDevelopmentSigningCertificate();
+            /*if (hostingEnv.IsDevelopment())
+            {
+                
+            }
+            else
+            {
+                builder.AddEncryptionCertificate("my-cert-thumbprint").AddSigningCertificate("my-cert-thumbprint");
+            }*/
+        });
+
 		PreConfigure<OpenIddictBuilder>(builder =>
-		{
-			builder.AddValidation(options =>
+        {
+            builder.AddValidation(options =>
 			{
 				options.AddAudiences("CodeJitsu");
 				options.UseLocalServer();
 				options.UseAspNetCore();
-			});
+            });
 		});
     }
 
