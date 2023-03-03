@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -117,15 +118,15 @@ public class CodeJitsuModule : AbpModule
 
         PreConfigure<OpenIddictServerBuilder>(builder =>
         {
-            builder.AddDevelopmentEncryptionCertificate().AddDevelopmentSigningCertificate();
-            /*if (hostingEnv.IsDevelopment())
+            if (hostingEnv.IsDevelopment())
             {
-                
+                builder.AddDevelopmentEncryptionCertificate().AddDevelopmentSigningCertificate();
             }
             else
             {
-                builder.AddEncryptionCertificate("my-cert-thumbprint").AddSigningCertificate("my-cert-thumbprint");
-            }*/
+                builder.AddEncryptionCertificate(new X509Certificate2("encryption-cert.pfx", "vuadmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
+                builder.AddSigningCertificate(new X509Certificate2("signing-cert.pfx", "vuadmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
+            }
         });
 
 		PreConfigure<OpenIddictBuilder>(builder =>
