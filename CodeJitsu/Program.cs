@@ -10,11 +10,11 @@ public class Program
     public async static Task<int> Main(string[] args)
     {
         var loggerConfiguration = new LoggerConfiguration()
-#if DEBUG
+//#if DEBUG
             .MinimumLevel.Debug()
-#else
+//#else
             .MinimumLevel.Information()
-#endif
+//#endif
             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
             .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
             .Enrich.FromLogContext()
