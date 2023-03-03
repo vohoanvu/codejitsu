@@ -124,13 +124,14 @@ public class CodeJitsuModule : AbpModule
             }
             else
             {
-                builder.AddEncryptionCertificate(new X509Certificate2("encryption-cert.pfx", "vuadmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
                 builder.AddSigningCertificate(new X509Certificate2("signing-cert.pfx", "vuadmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
+                builder.AddEncryptionCertificate(new X509Certificate2("encryption-cert.pfx", "vuadmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
             }
         });
 
 		PreConfigure<OpenIddictBuilder>(builder =>
         {
+            builder.AddServer();
             builder.AddValidation(options =>
 			{
 				options.AddAudiences("CodeJitsu");
