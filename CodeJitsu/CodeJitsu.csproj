@@ -95,4 +95,8 @@
     <Content Remove="$(UserProfile)\.nuget\packages\*\*\contentFiles\any\*\*.abppkg*.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Remove="web.config" />
+  </ItemGroup>
+
 </Project>
