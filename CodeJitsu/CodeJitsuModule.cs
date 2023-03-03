@@ -50,6 +50,7 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
 using Volo.Abp.EntityFrameworkCore.DependencyInjection;
+using Volo.Abp.OpenIddict;
 
 namespace CodeJitsu;
 
@@ -129,16 +130,20 @@ public class CodeJitsuModule : AbpModule
             }
         });
 
-		PreConfigure<OpenIddictBuilder>(builder =>
+        PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
         {
-            builder.AddServer();
+            options.AddDevelopmentEncryptionAndSigningCertificate = false;
+        });
+
+        PreConfigure<OpenIddictBuilder>(builder =>
+        {
             builder.AddValidation(options =>
 			{
 				options.AddAudiences("CodeJitsu");
 				options.UseLocalServer();
 				options.UseAspNetCore();
-                options.AddEncryptionCertificate(new X509Certificate2("encryption-cert.pfx", "vuadmin96",
-                    X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
+                /*options.AddEncryptionCertificate(new X509Certificate2("encryption-cert.pfx", "vuadmin96",
+                    X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));*/
             });
 		});
     }
