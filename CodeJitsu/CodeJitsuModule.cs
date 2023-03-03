@@ -137,6 +137,8 @@ public class CodeJitsuModule : AbpModule
 				options.AddAudiences("CodeJitsu");
 				options.UseLocalServer();
 				options.UseAspNetCore();
+                options.AddEncryptionCertificate(new X509Certificate2("encryption-cert.pfx", "vuadmin96",
+                    X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
             });
 		});
     }
