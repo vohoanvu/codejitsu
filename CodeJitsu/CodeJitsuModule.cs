@@ -51,6 +51,7 @@ using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
 using Volo.Abp.EntityFrameworkCore.DependencyInjection;
 using Volo.Abp.OpenIddict;
+using Microsoft.Extensions.Hosting.Internal;
 
 namespace CodeJitsu;
 
@@ -117,22 +118,13 @@ public class CodeJitsuModule : AbpModule
 
         var hostingEnv = context.Services.GetHostingEnvironment();
 
-        PreConfigure<OpenIddictServerBuilder>(builder =>
-        {
-            if (hostingEnv.IsDevelopment())
-            {
-                builder.AddDevelopmentEncryptionCertificate().AddDevelopmentSigningCertificate();
-            }
-            else
-            {
-                builder.AddSigningCertificate(new X509Certificate2("signing-cert.pfx", "vuadmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
-                builder.AddEncryptionCertificate(new X509Certificate2("encryption-cert.pfx", "vuadmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
-            }
-        });
-
         PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
         {
-            options.AddDevelopmentEncryptionAndSigningCertificate = false;
+            if (hostingEnv.IsProduction())
+            {
+                //https://documentation.openiddict.com/configuration/encryption-and-signing-credentials.html
+                options.AddDevelopmentEncryptionAndSigningCertificate = false;
+            }
         });
 
         PreConfigure<OpenIddictBuilder>(builder =>
@@ -142,10 +134,21 @@ public class CodeJitsuModule : AbpModule
 				options.AddAudiences("CodeJitsu");
 				options.UseLocalServer();
 				options.UseAspNetCore();
-                /*options.AddEncryptionCertificate(new X509Certificate2("encryption-cert.pfx", "vuadmin96",
-                    X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));*/
             });
 		});
+
+        PreConfigure<OpenIddictServerBuilder>(builder =>
+        {
+            if (hostingEnv.IsDevelopment())
+            {
+                builder.AddDevelopmentEncryptionCertificate().AddDevelopmentSigningCertificate();
+            }
+            else
+            {
+                builder.AddSigningCertificate(new X509Certificate2("signing-cert.pfx", "vuAdmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
+                builder.AddEncryptionCertificate(new X509Certificate2("encryption-cert.pfx", "vuAdmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
+            }
+        });
     }
 
     public override void ConfigureServices(ServiceConfigurationContext context)
