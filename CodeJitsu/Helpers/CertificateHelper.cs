@@ -9,7 +9,7 @@ namespace CodeJitsu.Helpers
         {
             using var algorithm = RSA.Create(keySizeInBits: 2048);
 
-            var subject = new X500DistinguishedName("CodeJitsu Encryption Certificate");
+            var subject = new X500DistinguishedName("CN=Fabrikam Encryption Certificate");
             var request = new CertificateRequest(subject, algorithm, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
             request.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.KeyEncipherment, critical: true));
 
@@ -22,7 +22,7 @@ namespace CodeJitsu.Helpers
         {
             using var algorithm = RSA.Create(keySizeInBits: 2048);
 
-            var subject = new X500DistinguishedName("CodeJitsu Signing Certificate");
+            var subject = new X500DistinguishedName("CN=Fabrikam Signing Certificate");
             var request = new CertificateRequest(subject, algorithm, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
             request.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, critical: true));
 
