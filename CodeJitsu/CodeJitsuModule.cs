@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
 using CodeJitsu.Data;
 using CodeJitsu.Entities.Fighter;
+using CodeJitsu.Helpers;
 using CodeJitsu.Localization;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Validation.AspNetCore;
@@ -145,8 +146,10 @@ public class CodeJitsuModule : AbpModule
             }
             else
             {
-                builder.AddSigningCertificate(new X509Certificate2("signing-cert.pfx", "vuAdmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
-                builder.AddEncryptionCertificate(new X509Certificate2("encryption-cert.pfx", "vuAdmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
+                CertificateHelper.GenerateEncryptionCert();
+                CertificateHelper.GenerateSigningCert();
+                builder.AddSigningCertificate(new X509Certificate2("signing-certificate.pfx", "vuAdmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
+                builder.AddEncryptionCertificate(new X509Certificate2("encryption-certificate.pfx", "vuAdmin96", X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.Exportable));
             }
         });
     }
