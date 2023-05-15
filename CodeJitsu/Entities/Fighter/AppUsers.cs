@@ -8,5 +8,7 @@ namespace CodeJitsu.Entities.Fighter
         public Guid FighterId { get; set; }
         [ForeignKey("FighterId")]
         public virtual Fighter Fighter { get; set; }
+
+        public string Discriminator { get; set; }
     }
 }
