@@ -11,7 +11,6 @@ using CodeJitsu.Localization;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
-using Volo.Abp.Uow;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.MultiTenancy;
@@ -27,7 +26,6 @@ using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.Emailing;
 using Volo.Abp.EntityFrameworkCore;
-using Volo.Abp.EntityFrameworkCore.MySQL;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
@@ -52,7 +50,7 @@ using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
 using Volo.Abp.EntityFrameworkCore.DependencyInjection;
 using Volo.Abp.OpenIddict;
-using Microsoft.Extensions.Hosting.Internal;
+using Volo.Abp.EntityFrameworkCore.SqlServer;
 
 namespace CodeJitsu;
 
@@ -62,7 +60,7 @@ namespace CodeJitsu;
     typeof(AbpAspNetCoreMultiTenancyModule),
     typeof(AbpAutofacModule),
     typeof(AbpAutoMapperModule),
-    typeof(AbpEntityFrameworkCoreMySQLModule),
+    typeof(AbpEntityFrameworkCoreSqlServerModule),
     typeof(AbpAspNetCoreMvcUiLeptonXLiteThemeModule),
     typeof(AbpSwashbuckleModule),
     typeof(AbpAspNetCoreSerilogModule),
@@ -345,7 +343,7 @@ public class CodeJitsuModule : AbpModule
         {
             options.Configure(configurationContext =>
             {
-                configurationContext.UseMySQL();
+                configurationContext.UseSqlServer();
             });
         });
 

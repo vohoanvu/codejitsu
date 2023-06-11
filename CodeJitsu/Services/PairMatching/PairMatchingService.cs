@@ -113,6 +113,10 @@ namespace CodeJitsu.Services.PairMatching
                                                Math.Abs(_fighters[i].BMI - _fighters[j].BMI) + 
                                                Math.Abs(_fighters[i].BeltRank.Stripe - _fighters[j].BeltRank.Stripe) + 
                                                Math.Abs(_fighters[i].MaxWorkoutDuration - _fighters[j].MaxWorkoutDuration);
+                    // Calculate the difference in FavoriteTechniqueToBeDrilled rankings
+                    //double favoriteTechniqueDifference = CalculateFavoriteTechniqueDifference(_fighters[i], _fighters[j]);
+                    //currentDifference += favoriteTechniqueDifference;
+
                     if (currentDifference < closestDifference)
                     {
                         closestDifference = currentDifference;
@@ -128,7 +132,32 @@ namespace CodeJitsu.Services.PairMatching
             }
 
             return new Tuple<Fighter, Fighter>(_fighter1, _fighter2);
-        }
+        }   
+
+        //private double CalculateFavoriteTechniqueDifference(Fighter fighter1, Fighter fighter2)
+        //{
+        //    double favoriteTechniqueDifference = 0;
+        //    foreach (var technique in fighter1.FavoriteTechniqueToBeDrilled)
+        //    {
+        //        if (fighter2.FavoriteTechniqueToBeDrilled.ContainsKey(technique.Key))
+        //        {
+        //            favoriteTechniqueDifference += Math.Abs(technique.Value - fighter2.FavoriteTechniqueToBeDrilled[technique.Key]);
+        //        }
+        //        else
+        //        {
+        //            favoriteTechniqueDifference += technique.Value;
+        //        }
+        //    }
+        //    foreach (var technique in fighter2.FavoriteTechniqueToBeDrilled)
+        //    {
+        //        if (!fighter1.FavoriteTechniqueToBeDrilled.ContainsKey(technique.Key))
+        //        {
+        //            favoriteTechniqueDifference += technique.Value;
+        //        }
+        //    }
+        //    return favoriteTechniqueDifference;
+        //}
+
 
         // TODO: add a method to compare two belt ranks based on their color and stripe. Return -1 if this rank is lower than the other rank, 
         // return +1 if this rank is higher than the other rank, return zero if they are equal.

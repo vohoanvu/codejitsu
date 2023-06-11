@@ -11,7 +11,7 @@ public class CodeJitsuDbContextFactory : IDesignTimeDbContextFactory<CodeJitsuDb
         var configuration = BuildConfiguration();
 
         var builder = new DbContextOptionsBuilder<CodeJitsuDbContext>()
-            .UseMySql(configuration.GetConnectionString("Default"), MySqlServerVersion.LatestSupportedServerVersion);
+            .UseSqlServer(configuration.GetConnectionString("Default"));
 
         return new CodeJitsuDbContext(builder.Options);
     }
