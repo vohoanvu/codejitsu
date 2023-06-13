@@ -21,6 +21,7 @@ public class CodeJitsuDbContext : AbpDbContext<CodeJitsuDbContext>
     public DbSet<Fighter> Fighters { get; set; }
     public DbSet<BeltRank> BeltRanks { get; set; }
     public DbSet<Technique> Techniques { get; set; }
+    public DbSet<TrainingSession> TrainingSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

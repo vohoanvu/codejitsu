@@ -5,31 +5,68 @@ namespace CodeJitsu.Services.PairMatching
     public class PairMatchingService
     {
         private readonly List<Fighter> _fighters;
-        private Fighter? _fighter1 = null;
-        private Fighter? _fighter2 = null;
+        private readonly Fighter _instructor = null;
+        private readonly int? _howManyDifferentPairs;
+        private int _pairCounter = 0;
+        private readonly HashSet<Tuple<Guid, Guid>> _pairHistory = new();
 
-        public PairMatchingService(List<Fighter> fighters)
+        public PairMatchingService(List<Fighter> students, Fighter instructor)
         {
-            _fighters = fighters;
+            _fighters = students;
+            _instructor = instructor;
         }
 
-        public List<Tuple<Fighter, Fighter>> GenerateFighterPairs()
+        public PairMatchingService(List<Fighter> students, Fighter instructor, int howManyDifferentPairs)
         {
+            _fighters = students;
+            _instructor = instructor;
+            _howManyDifferentPairs = howManyDifferentPairs;
+        }
+
+        public IEnumerable<List<Tuple<Fighter, Fighter>>> GenerateFighterPairs()
+        {
+            while (_howManyDifferentPairs == null || _pairCounter < _howManyDifferentPairs)
+            {
+                var pairs = GenerateNextFighterPairs();
+                if (pairs.Any())
+                {
+                    _pairCounter++;
+                    yield return pairs;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        public List<Tuple<Fighter, Fighter>> GenerateNextFighterPairs()
+        {
+            List<Fighter> remainingFighters = new List<Fighter>(_fighters);
             List<Tuple<Fighter, Fighter>> pairs = new List<Tuple<Fighter, Fighter>>();
 
             if (_fighters.Count % 2 != 0)
             {
                 // If there is an odd number of fighters in the list, create a new fighter of FighterRole.Instructor role and pair up with one of them.
-                Fighter instructor = CreateInstructor();
-                Tuple<Fighter, Fighter> instructorPair = PairUpOddFighter(instructor);
+                Tuple<Fighter, Fighter> instructorPair = PairUpOddFighter(_instructor);
                 pairs.Add(instructorPair);
+                remainingFighters.Remove(instructorPair.Item2);
             }
 
-            while (_fighters.Count > 0)
+            while (remainingFighters.Count > 0)
             {
                 // Find the closest matching pair among the remaining fighters and add it to the list of pairs.
-                Tuple<Fighter, Fighter> pair = FindMatchingPair();
-                pairs.Add(pair);
+                Tuple<Fighter, Fighter> pair = FindNextMatchingPair(remainingFighters);
+                if (pair != null)
+                {
+                    pairs.Add(pair);
+                    remainingFighters.Remove(pair.Item1);
+                    remainingFighters.Remove(pair.Item2);
+                }
+                else
+                {
+                    break;
+                }
             }
 
             return pairs;
@@ -93,46 +130,43 @@ namespace CodeJitsu.Services.PairMatching
             return highestRankFighter;
         }
 
-        private Fighter CreateInstructor()
-        {
-            return new Fighter
-            {
-                Role = FighterRole.Instructor
-            };
-        }
-
-        public Tuple<Fighter, Fighter> FindMatchingPair()
+        public Tuple<Fighter, Fighter> FindNextMatchingPair(List<Fighter> remainingFighters)
         {
             double closestDifference = double.MaxValue;
+            Tuple<Fighter, Fighter> bestPair = null;
 
-            for (int i = 0; i < _fighters.Count; i++)
+            for (int i = 0; i < remainingFighters.Count; i++)
             {
-                for (int j = i + 1; j < _fighters.Count; j++)
+                for (int j = i + 1; j < remainingFighters.Count; j++)
                 {
-                    double currentDifference = Math.Abs(_fighters[i].Weight - _fighters[j].Weight) + 
-                                               Math.Abs(_fighters[i].BMI - _fighters[j].BMI) + 
-                                               Math.Abs(_fighters[i].BeltRank.Stripe - _fighters[j].BeltRank.Stripe) + 
-                                               Math.Abs(_fighters[i].MaxWorkoutDuration - _fighters[j].MaxWorkoutDuration);
-                    // Calculate the difference in FavoriteTechniqueToBeDrilled rankings
-                    //double favoriteTechniqueDifference = CalculateFavoriteTechniqueDifference(_fighters[i], _fighters[j]);
-                    //currentDifference += favoriteTechniqueDifference;
-
-                    if (currentDifference < closestDifference)
+                    // check if the pair is not already in the history
+                    var f1 = remainingFighters[i];
+                    var f2 = remainingFighters[j];
+                    if (!_pairHistory.Contains(Tuple.Create(f1.Id, f2.Id)) &&
+                        !_pairHistory.Contains(Tuple.Create(f2.Id, f1.Id)))
                     {
-                        closestDifference = currentDifference;
-                        _fighter1 = _fighters[i];
-                        _fighter2 = _fighters[j];
+                        double currentDifference = ComputeDifference(f1, f2);
+                        // Calculate the difference in FavoriteTechniqueToBeDrilled rankings
+                        //double favoriteTechniqueDifference = CalculateFavoriteTechniqueDifference(_fighters[i], _fighters[j]);
+                        //currentDifference += favoriteTechniqueDifference;
+
+                        if (currentDifference < closestDifference)
+                        {
+                            closestDifference = currentDifference;
+                            bestPair = Tuple.Create(f1, f2);
+                        }
                     }
                 }
             }
 
-            if (_fighter1 == null || _fighter2 == null)
+            // add the new pair to the history
+            if (bestPair != null)
             {
-                throw new ApplicationException("There is a problem in the pairing process, one of the 2 fighters is NULL");
+                _pairHistory.Add(Tuple.Create(bestPair.Item1.Id, bestPair.Item2.Id)); // Record the pair in history
             }
 
-            return new Tuple<Fighter, Fighter>(_fighter1, _fighter2);
-        }   
+            return bestPair;
+        }
 
         //private double CalculateFavoriteTechniqueDifference(Fighter fighter1, Fighter fighter2)
         //{
@@ -159,8 +193,18 @@ namespace CodeJitsu.Services.PairMatching
         //}
 
 
-        // TODO: add a method to compare two belt ranks based on their color and stripe. Return -1 if this rank is lower than the other rank, 
+        //add a method to compare two belt ranks based on their color and stripe. Return -1 if this rank is lower than the other rank, 
         // return +1 if this rank is higher than the other rank, return zero if they are equal.
+
+        private static double ComputeDifference(Fighter f1, Fighter f2)
+        {
+            return
+                Math.Abs(f1.Weight - f2.Weight) +
+                Math.Abs(f1.BMI - f2.BMI) +
+                Math.Abs(f1.BeltRank.Stripe - f2.BeltRank.Stripe) +
+                Math.Abs(f1.MaxWorkoutDuration - f2.MaxWorkoutDuration);
+        }
+
         private static int CompareTo(BeltRank source, BeltRank other)
         {
             // Define an order of colors from lowest to highest as white, blue, purple, brown, black.
