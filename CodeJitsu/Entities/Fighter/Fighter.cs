@@ -9,10 +9,10 @@ namespace CodeJitsu.Entities.Fighter
         public string FighterName { get; set; }
 
         [Required]
-        public double Height { get; set; }
+        public double Height { get; set; }      //in centimeters
 
         [Required]
-        public double Weight { get; set; }
+        public double Weight { get; set; }      //in kilogram
 
         [Required]
         public double BMI { get; set; }

@@ -1,6 +1,5 @@
 ﻿using CodeJitsu.Entities.Fighter;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
@@ -21,6 +20,8 @@ public class CodeJitsuDbContext : AbpDbContext<CodeJitsuDbContext>
 
     public DbSet<Fighter> Fighters { get; set; }
     public DbSet<BeltRank> BeltRanks { get; set; }
+    public DbSet<Technique> Techniques { get; set; }
+    public DbSet<TrainingSession> TrainingSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
