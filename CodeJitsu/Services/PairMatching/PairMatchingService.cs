@@ -25,7 +25,7 @@ namespace CodeJitsu.Services.PairMatching
 
         public IEnumerable<List<Tuple<Fighter, Fighter>>> GenerateFighterPairs()
         {
-            while (_howManyDifferentPairs == null || _pairCounter < _howManyDifferentPairs)
+            while (_howManyDifferentPairs != null || _pairCounter < _howManyDifferentPairs)
             {
                 var pairs = GenerateNextFighterPairs();
                 if (pairs.Any())
@@ -167,7 +167,6 @@ namespace CodeJitsu.Services.PairMatching
 
         //add a method to compare two belt ranks based on their color and stripe. Return -1 if this rank is lower than the other rank, 
         // return +1 if this rank is higher than the other rank, return zero if they are equal.
-
         private static double ComputeDifference(Fighter f1, Fighter f2)
         {
             return
